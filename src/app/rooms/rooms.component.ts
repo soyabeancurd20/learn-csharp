@@ -3,7 +3,7 @@ import { Room, RoomList } from './rooms';
 import { HeaderComponent } from '../header/header.component';
 import { RoomsService } from './services/rooms.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'hinv-rooms',
@@ -49,6 +49,24 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
     
     totalBytes = 0;
 
+    subscription ?: Subscription;
+
+    error$ =new Subject<string>;
+
+    getError$ = this.error$.asObservable();
+
+    rooms$ = this.roomsService.getRooms$.pipe(
+      catchError((err)=>{
+        //console.log(err);
+        this.error$.next(err.message);
+        return of([]);
+      })
+    );
+
+    roomsCount$ = this.roomsService.getRooms$.pipe(
+      map((rooms) => rooms.length)
+    );
+
     constructor(@SkipSelf() private roomsService: RoomsService){}
 
 
@@ -79,9 +97,9 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
         error: (err)=> console.log(err),   
       });
       this.stream.subscribe((data)=>console.log(data));
-      this.roomsService.getRooms$.subscribe(rooms=>{
-        this.roomList = rooms;
-      });
+      //this.roomsService.getRooms$.subscribe(rooms=>{
+        //this.roomList = rooms;
+      //});
     }
 
 
@@ -152,6 +170,11 @@ export class RoomsComponent implements OnInit, DoCheck, AfterViewInit, AfterView
     })
   }
 
+  ngOnDestroy(){
+    if(this.subscription){
+      this.subscription.unsubscribe(); 
+    }
+  }
   
 }
 

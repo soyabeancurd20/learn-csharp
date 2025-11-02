@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, Inject, inject, OnInit, Optional,
 import {RoomsComponent} from './rooms/rooms.component';
 import { LoggerService } from './logger.service';
 import{localStorageToken} from'./localstorage.token'
+import { InitService } from './init.service';
 
 @Component({
   selector: 'hinv-root',
@@ -14,8 +15,9 @@ export class AppComponent implements OnInit{
   @ViewChild('name', { static: true }) name!: ElementRef;
 
 constructor(@Optional() private loggerService: LoggerService,
-  @Inject(localStorageToken) private localStorage: Storage) {
-
+  @Inject(localStorageToken) private localStorage: any,
+private initService: InitService) {
+console.log(initService.config)
 }
 
   ngOnInit(): void {

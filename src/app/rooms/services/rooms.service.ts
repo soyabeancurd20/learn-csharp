@@ -3,7 +3,7 @@ import { RoomList } from '../rooms';
 import { environment } from 'src/environments/environment.prod';
 import { APP_SERVICE_CONFIG } from 'src/app/AppConfig/appconfig.service';
 import { AppConfig } from 'src/app/AppConfig/appconfig.interface';
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { shareReplay } from 'rxjs';
 
 @Injectable({
@@ -12,7 +12,7 @@ import { shareReplay } from 'rxjs';
 export class RoomsService {
 
   roomList: RoomList[] = [];
-
+  //headers = new HttpHeaders({ 'token': '12345ggg' })
   getRooms$ = this.http.get<RoomList[]>('/api/rooms').pipe(
     shareReplay(1)
   );
@@ -24,6 +24,7 @@ export class RoomsService {
 
   getRooms(){
     return this.http.get<RoomList[]>('/api/rooms');
+    
   }
 
   addRoom(room: RoomList){
